@@ -29,7 +29,7 @@ static char *ngx_load_module(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 #if (NGX_HAVE_DLOPEN)
 static void ngx_unload_module(void *data);
 #endif
-
+int ktls = 0;
 
 static ngx_conf_enum_t  ngx_debug_points[] = {
     { ngx_string("stop"), NGX_DEBUG_POINTS_STOP },
@@ -761,6 +761,10 @@ ngx_get_options(int argc, char *const *argv)
             case 'h':
                 ngx_show_version = 1;
                 ngx_show_help = 1;
+                break;
+
+            case 'K':
+                ktls = 1;
                 break;
 
             case 'v':

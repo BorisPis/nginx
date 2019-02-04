@@ -8,7 +8,12 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
+#include <execinfo.h>
+#include <stdio.h>
+#include <stdlib.h>
 
+
+extern int ktls;
 
 static void ngx_http_wait_request_handler(ngx_event_t *ev);
 static ngx_http_request_t *ngx_http_alloc_request(ngx_connection_t *c);
@@ -604,9 +609,9 @@ ngx_http_alloc_request(ngx_connection_t *c)
     }
 
 #if (NGX_HTTP_SSL)
-    if (c->ssl) {
-        r->main_filter_need_in_memory = 1;
-    }
+    if(ktls == 0)
+        if (c->ssl)
+            r->main_filter_need_in_memory = 1;
 #endif
 
     r->main = r;
