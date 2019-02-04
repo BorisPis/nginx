@@ -12,6 +12,7 @@
 
 #define NGX_SSL_PASSWORD_BUFFER_SIZE  4096
 
+extern int ktls;
 
 typedef struct {
     ngx_uint_t  engine;   /* unsigned  engine:1; */
@@ -1310,6 +1311,8 @@ ngx_ssl_create_connection(ngx_ssl_t *ssl, ngx_connection_t *c, ngx_uint_t flags)
     }
 
     c->ssl = sc;
+    if(ktls == 0)
+        SSL_set_mode(sc->connection, SSL_MODE_NO_KTLS_TX);
 
     return NGX_OK;
 }
@@ -1392,6 +1395,8 @@ ngx_ssl_handshake(ngx_connection_t *c)
         c->send = ngx_ssl_write;
         c->recv_chain = ngx_ssl_recv_chain;
         c->send_chain = ngx_ssl_send_chain;
+	if(ktls == 1)
+            c->send_chain = ngx_linux_sendfile_chain;
 
 #ifndef SSL_OP_NO_RENEGOTIATION
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
